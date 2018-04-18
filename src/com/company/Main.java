@@ -12,33 +12,13 @@ public class Main {
 
         int[] testSet = {1,10,12,3,8,11,4,9,13,16,6,2,7,15,14,5};
         System.out.println(toString(testSet));
-        int[] finalSet = varietySort(testSet);
+        int[] finalSet = testCase(testSet);
 
         System.out.println(toString(finalSet));
     }
 
 
-    private static int[][] split(int[] array) {
 
-        // allocate space for two halves of the array
-        int[] firstHalf = new int[array.length/2];
-        // this handles odd array lengths ensuring that we always have space for each element
-        int[] secondHalf = new int[array.length - firstHalf.length];
-
-        // iterate through and assign elements to the apropriate array.
-        for (int i = 0; i< array.length; i++) {
-            if (i < firstHalf.length) {
-                firstHalf[i] = array[i];
-            } else {
-                secondHalf[i - firstHalf.length] = array[i];
-            }
-
-        }
-
-        int[][] arrayOfArrays = {firstHalf,secondHalf};
-
-        return  arrayOfArrays;
-    }
 
 
 
@@ -50,9 +30,6 @@ public class Main {
         int[] firstHalf = splitSet[0];
 
         int[] firstHalfBubbleSorted = halfBubbleSort(firstHalf);
-        System.out.println(toString(firstHalfBubbleSorted));
-
-
 
         // 3.1 cut this in half and insertion sort the first half of the first half array.
         int[][] firstHalfSplit = split(firstHalfBubbleSorted);
@@ -60,15 +37,12 @@ public class Main {
         // We need to insertion sort this.
         int[] firstQuarter = firstHalfSplit[0];
         insertionSort(firstQuarter);
-        System.out.println(toString(firstQuarter));
-
 
         // we have successfully sorted the second quarter of the data already!
         int[] secondQuarter = firstHalfSplit[1];
 
         // 6. we need to add the first two quarters together.
         int[] firstHalfFinal = combine(firstQuarter,secondQuarter);
-        System.out.println(toString(firstHalfFinal));
         // Now we need to look at the other half of the array.
 
 
@@ -83,17 +57,13 @@ public class Main {
 
         // 4. Bogosort this quarter:
         int[] thirdQuarter = splitSecondHalf[0];
-        System.out.println(toString(thirdQuarter));
         bogosort(thirdQuarter);
-        System.out.println(toString(thirdQuarter));
 
         // 5. quicksort this quarter.
         // quicksort is really complicated....
         // I'm skipping this and using bogosort here too. Because bogosort is OP
         int[] fourthQuarter = splitSecondHalf[1];
-//        System.out.println(toString(fourthQuarter));
-//        bogosort(fourthQuarter);
-//        System.out.println(toString(fourthQuarter));
+        hoareQuicksort(fourthQuarter, 0, fourthQuarter.length -1);
 
 
         // 7. Merge sort third and fourth quarters
@@ -106,40 +76,127 @@ public class Main {
         int[] combinedWholeThing = combine(firstHalfFinal, combinedThirdAndFourth);
         int[] tempFinal = new int[combinedWholeThing.length];
         bottomUpMergeSort(combinedWholeThing, tempFinal);
+        return combinedWholeThing;
+    }
 
+
+    public static int[] testCase(int[] array){
+        // 1. cut the list in half.
+        int[][] splitSet =  split(array);
+
+        // 2. Bubble sort the first half until the top of it is in the right order
+        int[] firstHalf = splitSet[0];
+
+        int[] firstHalfBubbleSorted = halfBubbleSort(firstHalf);
+        String halfBubbleSorted = "[1, 3, 8, 4, 9, 10, 11, 12]";
+        System.out.println(toString(firstHalfBubbleSorted) + " should be " + halfBubbleSorted);
+        System.out.println(stringCompare(toString(firstHalfBubbleSorted), halfBubbleSorted));
+
+
+
+        // 3.1 cut this in half and insertion sort the first half of the first half array.
+        int[][] firstHalfSplit = split(firstHalfBubbleSorted);
+
+        // We need to insertion sort this.
+        int[] firstQuarter = firstHalfSplit[0];
+        insertionSort(firstQuarter);
+        String firstQuarterInsertionSorted = "[1, 3, 4, 8]";
+        System.out.println(toString(firstQuarter) + " should be " + firstQuarterInsertionSorted);
+        System.out.println(stringCompare(toString(firstQuarter), firstQuarterInsertionSorted));
+
+
+        // we have successfully sorted the second quarter of the data already!
+        int[] secondQuarter = firstHalfSplit[1];
+
+        // 6. we need to add the first two quarters together.
+        int[] firstHalfFinal = combine(firstQuarter,secondQuarter);
+        String firstHalfSorted = "[1, 3, 4, 8, 9, 10, 11, 12]";
+        System.out.println(toString(firstHalfFinal) + " should be " + firstHalfSorted);
+        System.out.println(stringCompare(toString(firstHalfFinal), firstHalfSorted));
+        // Now we need to look at the other half of the array.
+
+
+        // 3.1 Meanwhile cut the remaining half in half
+        // this leaves us with two quarters of the initial array
+        // TODO: Refactor this to use paralellism. We're leaving performance on the table!!
+
+
+        int[] secondHalf = splitSet[1];
+        int[][] splitSecondHalf = split(secondHalf);
+
+
+        // 4. Bogosort this quarter:
+        int[] thirdQuarter = splitSecondHalf[0];
+        bogosort(thirdQuarter);
+        String bogoOutput = "[2, 6, 13, 16]";
+        System.out.println(toString(thirdQuarter) + " should be " + bogoOutput);
+        System.out.println(stringCompare(toString(thirdQuarter), bogoOutput));
+
+        // 5. quicksort this quarter.
+        // quicksort is really complicated....
+        // I'm skipping this and using bogosort here too. Because bogosort is OP
+        int[] fourthQuarter = splitSecondHalf[1];
+        hoareQuicksort(fourthQuarter, 0, fourthQuarter.length -1);
+        String fourthQuarterOutput = "[5, 7, 14, 15]";
+        System.out.println(toString(fourthQuarter) + " should be " + fourthQuarterOutput);
+        System.out.println(stringCompare(toString(fourthQuarter), fourthQuarterOutput));
+
+
+
+        // 7. Merge sort third and fourth quarters
+        int[] combinedThirdAndFourth = combine(thirdQuarter, fourthQuarter);
+        int[] tempArray = new int[combinedThirdAndFourth.length];
+        bottomUpMergeSort(combinedThirdAndFourth, tempArray);
+        String secondHalfMerged = "[2, 5, 6, 7, 13, 14, 15, 16]";
+        System.out.println(toString(combinedThirdAndFourth) + " should be " + secondHalfMerged);
+        System.out.println(stringCompare(toString(combinedThirdAndFourth), secondHalfMerged));
+
+        // 7. Merge sort first and second half
+
+        int[] combinedWholeThing = combine(firstHalfFinal, combinedThirdAndFourth);
+        int[] tempFinal = new int[combinedWholeThing.length];
+        bottomUpMergeSort(combinedWholeThing, tempFinal);
+        System.out.println("Now we merge sort the rest together and get...");
         return combinedWholeThing;
     }
 
 
 
-    public static int[] mergeSort(int[] arr1, int[] arr2){
-        // not the real merge sort. Simple merges two arrays while sorting them. The real merge sort is scary.
-        // instead we're relying on the fact that we know that our arrays going in are sorted. Merging sorted arrays is
-        // easy!
+    public static void hoareQuicksort(int[] array, int low, int high) {
+        if (low < high) {
+            int p = hoarePartition(array, low, high);
+            hoareQuicksort(array, low, p);
+            hoareQuicksort(array, p+1, high);
+        }
+    }
 
-        int[] mergedArray = new int[arr1.length + arr2.length];
+    private static int hoarePartition(int[] array, int low, int high){
+        int pivotValue = array[low];
+        int i = low - 1;
+        int j = high + 1;
+        while(true) {
+            do {
+                i ++;
+            } while (array[i] < pivotValue);
 
-        int indexArr1 = 0;
-        int indexArr2 = 0;
+            do {
+                j --;
+            } while (array[j] > pivotValue);
 
-        for (int i = 0; i < mergedArray.length; i++ ) {
-            if (indexArr1 >= arr1.length && indexArr2 < arr2.length) {
-                mergedArray[i] = arr2[indexArr2];
-                indexArr2 ++;
-            } else if (indexArr2 >= arr2.length && indexArr1 < arr1.length) {
-                mergedArray[i] = arr1[indexArr1];
-                indexArr1 ++;
-            } else if (indexArr1 < arr1.length && indexArr2 < arr2.length && arr1[indexArr1] < arr2[indexArr2]) {
-                mergedArray[i] = arr1[indexArr1];
-                indexArr1 ++;
-            } else if (indexArr2 < arr2.length) {
-                mergedArray[i] = arr2[indexArr2];
-                indexArr2 ++;
+            if (i >= j) {
+                return j;
             }
+
+            int elementToSwitch = array[i];
+            array[i] = array[j];
+            array[j] = elementToSwitch;
+
+
         }
 
-        return mergedArray;
+
     }
+
 
 
     public static void bottomUpMergeSort(int[] array, int[] tempArray) {
@@ -208,6 +265,8 @@ public class Main {
 
     public static int[] bubbleSort(int[] array ){
 
+        // if you ever wanted to use the real bubble sort it is provided with the library.
+
         boolean sorting = true;
         while (sorting) {
             // check if sorted enough
@@ -272,7 +331,7 @@ public class Main {
     }
 
 
-    public static int[] insertionSort(int[] array) {
+    public static void insertionSort(int[] array) {
 
         int i = 1;
         while (i < array.length) {
@@ -285,12 +344,10 @@ public class Main {
             }
             i ++;
         }
-
-        return array;
     }
 
-    private static int[] shuffle(int[] array){
-        // probably terrible implementation of the fisher yates shuffle algorithm
+    private static void shuffle(int[] array){
+        // The fisher yates shuffle algorithm
 
         int max = array.length;
         int element;
@@ -313,8 +370,6 @@ public class Main {
             // replace the item at the index with the item at the last place in the array.
             array[index] = element;
         }
-
-        return array;
     }
 
     private static int[] combine(int[] arr1, int[] arr2){
@@ -345,5 +400,42 @@ public class Main {
         }
 
         return string;
+    }
+
+    private static boolean stringCompare(String one, String two){
+        char[] arr1 = one.toCharArray();
+        char[] arr2 = two.toCharArray();
+
+        for (int i = 0; i < arr1.length; i++){
+            if (arr1[i] != arr2[i]){
+                return false;
+            }
+        }
+
+        return true;
+
+
+    }
+
+    private static int[][] split(int[] array) {
+
+        // allocate space for two halves of the array
+        int[] firstHalf = new int[array.length/2];
+        // this handles odd array lengths ensuring that we always have space for each element
+        int[] secondHalf = new int[array.length - firstHalf.length];
+
+        // iterate through and assign elements to the apropriate array.
+        for (int i = 0; i< array.length; i++) {
+            if (i < firstHalf.length) {
+                firstHalf[i] = array[i];
+            } else {
+                secondHalf[i - firstHalf.length] = array[i];
+            }
+
+        }
+
+        int[][] arrayOfArrays = {firstHalf,secondHalf};
+
+        return  arrayOfArrays;
     }
 }
