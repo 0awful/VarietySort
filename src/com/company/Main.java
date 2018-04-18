@@ -1,6 +1,5 @@
 package com.company;
 
-import javax.swing.text.DefaultEditorKit;
 
 public class Main {
 
@@ -9,40 +8,39 @@ public class Main {
         // inspired by
         // https://i.redd.it/xmh10hvt4lr01.png
 
-
-        int[] testSet = {1,10,12,3,8,11,4,9,13,16,6,2,7,15,14,5};
+        Comparable[] testSet = {1,10,12,3,8,11,4,9,13,16,6,2,7,15,14,5};
         System.out.println(toString(testSet));
-        int[] finalSet = testCase(testSet);
+        Comparable[] finalSet = testCase(testSet);
 
         System.out.println(toString(finalSet));
+
+        System.out.println("Using varietySort():");
+        System.out.println(toString(varietySort(testSet)));
+
     }
 
 
-
-
-
-
-    public static int[] varietySort(int[] array){
+    public static Comparable[] varietySort(Comparable[] array){
         // 1. cut the list in half.
-        int[][] splitSet =  split(array);
+        Comparable[][] splitSet =  split(array);
 
         // 2. Bubble sort the first half until the top of it is in the right order
-        int[] firstHalf = splitSet[0];
+        Comparable[] firstHalf = splitSet[0];
 
-        int[] firstHalfBubbleSorted = halfBubbleSort(firstHalf);
+        Comparable[] firstHalfBubbleSorted = halfBubbleSort(firstHalf);
 
         // 3.1 cut this in half and insertion sort the first half of the first half array.
-        int[][] firstHalfSplit = split(firstHalfBubbleSorted);
+        Comparable[][] firstHalfSplit = split(firstHalfBubbleSorted);
 
         // We need to insertion sort this.
-        int[] firstQuarter = firstHalfSplit[0];
+        Comparable[] firstQuarter = firstHalfSplit[0];
         insertionSort(firstQuarter);
 
         // we have successfully sorted the second quarter of the data already!
-        int[] secondQuarter = firstHalfSplit[1];
+        Comparable[] secondQuarter = firstHalfSplit[1];
 
         // 6. we need to add the first two quarters together.
-        int[] firstHalfFinal = combine(firstQuarter,secondQuarter);
+        Comparable[] firstHalfFinal = combine(firstQuarter,secondQuarter);
         // Now we need to look at the other half of the array.
 
 
@@ -51,43 +49,43 @@ public class Main {
         // TODO: Refactor this to use paralellism. We're leaving performance on the table!!
 
 
-        int[] secondHalf = splitSet[1];
-        int[][] splitSecondHalf = split(secondHalf);
+        Comparable[] secondHalf = splitSet[1];
+        Comparable[][] splitSecondHalf = split(secondHalf);
 
 
         // 4. Bogosort this quarter:
-        int[] thirdQuarter = splitSecondHalf[0];
+        Comparable[] thirdQuarter = splitSecondHalf[0];
         bogosort(thirdQuarter);
 
         // 5. quicksort this quarter.
         // quicksort is really complicated....
         // I'm skipping this and using bogosort here too. Because bogosort is OP
-        int[] fourthQuarter = splitSecondHalf[1];
+        Comparable[] fourthQuarter = splitSecondHalf[1];
         hoareQuicksort(fourthQuarter, 0, fourthQuarter.length -1);
 
 
         // 7. Merge sort third and fourth quarters
-        int[] combinedThirdAndFourth = combine(thirdQuarter, fourthQuarter);
-        int[] tempArray = new int[combinedThirdAndFourth.length];
+        Comparable[] combinedThirdAndFourth = combine(thirdQuarter, fourthQuarter);
+        Comparable[] tempArray = new Comparable[combinedThirdAndFourth.length];
         bottomUpMergeSort(combinedThirdAndFourth, tempArray);
 
         // 7. Merge sort first and second half
 
-        int[] combinedWholeThing = combine(firstHalfFinal, combinedThirdAndFourth);
-        int[] tempFinal = new int[combinedWholeThing.length];
+        Comparable[] combinedWholeThing = combine(firstHalfFinal, combinedThirdAndFourth);
+        Comparable[] tempFinal = new Comparable[combinedWholeThing.length];
         bottomUpMergeSort(combinedWholeThing, tempFinal);
         return combinedWholeThing;
     }
 
 
-    public static int[] testCase(int[] array){
+    public static Comparable[] testCase(Comparable[] array){
         // 1. cut the list in half.
-        int[][] splitSet =  split(array);
+        Comparable[][] splitSet =  split(array);
 
         // 2. Bubble sort the first half until the top of it is in the right order
-        int[] firstHalf = splitSet[0];
+        Comparable[] firstHalf = splitSet[0];
 
-        int[] firstHalfBubbleSorted = halfBubbleSort(firstHalf);
+        Comparable[] firstHalfBubbleSorted = halfBubbleSort(firstHalf);
         String halfBubbleSorted = "[1, 3, 8, 4, 9, 10, 11, 12]";
         System.out.println(toString(firstHalfBubbleSorted) + " should be " + halfBubbleSorted);
         System.out.println(stringCompare(toString(firstHalfBubbleSorted), halfBubbleSorted));
@@ -95,10 +93,10 @@ public class Main {
 
 
         // 3.1 cut this in half and insertion sort the first half of the first half array.
-        int[][] firstHalfSplit = split(firstHalfBubbleSorted);
+        Comparable[][] firstHalfSplit = split(firstHalfBubbleSorted);
 
         // We need to insertion sort this.
-        int[] firstQuarter = firstHalfSplit[0];
+        Comparable[] firstQuarter = firstHalfSplit[0];
         insertionSort(firstQuarter);
         String firstQuarterInsertionSorted = "[1, 3, 4, 8]";
         System.out.println(toString(firstQuarter) + " should be " + firstQuarterInsertionSorted);
@@ -106,10 +104,10 @@ public class Main {
 
 
         // we have successfully sorted the second quarter of the data already!
-        int[] secondQuarter = firstHalfSplit[1];
+        Comparable[] secondQuarter = firstHalfSplit[1];
 
         // 6. we need to add the first two quarters together.
-        int[] firstHalfFinal = combine(firstQuarter,secondQuarter);
+        Comparable[] firstHalfFinal = combine(firstQuarter,secondQuarter);
         String firstHalfSorted = "[1, 3, 4, 8, 9, 10, 11, 12]";
         System.out.println(toString(firstHalfFinal) + " should be " + firstHalfSorted);
         System.out.println(stringCompare(toString(firstHalfFinal), firstHalfSorted));
@@ -121,12 +119,12 @@ public class Main {
         // TODO: Refactor this to use paralellism. We're leaving performance on the table!!
 
 
-        int[] secondHalf = splitSet[1];
-        int[][] splitSecondHalf = split(secondHalf);
+        Comparable[] secondHalf = splitSet[1];
+        Comparable[][] splitSecondHalf = split(secondHalf);
 
 
         // 4. Bogosort this quarter:
-        int[] thirdQuarter = splitSecondHalf[0];
+        Comparable[] thirdQuarter = splitSecondHalf[0];
         bogosort(thirdQuarter);
         String bogoOutput = "[2, 6, 13, 16]";
         System.out.println(toString(thirdQuarter) + " should be " + bogoOutput);
@@ -135,7 +133,7 @@ public class Main {
         // 5. quicksort this quarter.
         // quicksort is really complicated....
         // I'm skipping this and using bogosort here too. Because bogosort is OP
-        int[] fourthQuarter = splitSecondHalf[1];
+        Comparable[] fourthQuarter = splitSecondHalf[1];
         hoareQuicksort(fourthQuarter, 0, fourthQuarter.length -1);
         String fourthQuarterOutput = "[5, 7, 14, 15]";
         System.out.println(toString(fourthQuarter) + " should be " + fourthQuarterOutput);
@@ -144,8 +142,8 @@ public class Main {
 
 
         // 7. Merge sort third and fourth quarters
-        int[] combinedThirdAndFourth = combine(thirdQuarter, fourthQuarter);
-        int[] tempArray = new int[combinedThirdAndFourth.length];
+        Comparable[] combinedThirdAndFourth = combine(thirdQuarter, fourthQuarter);
+        Comparable[] tempArray = new Comparable[combinedThirdAndFourth.length];
         bottomUpMergeSort(combinedThirdAndFourth, tempArray);
         String secondHalfMerged = "[2, 5, 6, 7, 13, 14, 15, 16]";
         System.out.println(toString(combinedThirdAndFourth) + " should be " + secondHalfMerged);
@@ -153,8 +151,8 @@ public class Main {
 
         // 7. Merge sort first and second half
 
-        int[] combinedWholeThing = combine(firstHalfFinal, combinedThirdAndFourth);
-        int[] tempFinal = new int[combinedWholeThing.length];
+        Comparable[] combinedWholeThing = combine(firstHalfFinal, combinedThirdAndFourth);
+        Comparable[] tempFinal = new Comparable[combinedWholeThing.length];
         bottomUpMergeSort(combinedWholeThing, tempFinal);
         System.out.println("Now we merge sort the rest together and get...");
         return combinedWholeThing;
@@ -162,7 +160,7 @@ public class Main {
 
 
 
-    public static void hoareQuicksort(int[] array, int low, int high) {
+    public static void hoareQuicksort(Comparable[] array, int low, int high) {
         if (low < high) {
             int p = hoarePartition(array, low, high);
             hoareQuicksort(array, low, p);
@@ -170,27 +168,26 @@ public class Main {
         }
     }
 
-    private static int hoarePartition(int[] array, int low, int high){
-        int pivotValue = array[low];
+    private static int hoarePartition(Comparable[] array, int low, int high){
+        Comparable pivotValue = array[low];
         int i = low - 1;
         int j = high + 1;
         while(true) {
             do {
                 i ++;
-            } while (array[i] < pivotValue);
+            } while (array[i].compareTo(pivotValue) == -1);
 
             do {
                 j --;
-            } while (array[j] > pivotValue);
+            } while (array[j].compareTo(pivotValue) == 1);
 
             if (i >= j) {
                 return j;
             }
 
-            int elementToSwitch = array[i];
+            Comparable elementToSwitch = array[i];
             array[i] = array[j];
             array[j] = elementToSwitch;
-
 
         }
 
@@ -199,7 +196,7 @@ public class Main {
 
 
 
-    public static void bottomUpMergeSort(int[] array, int[] tempArray) {
+    public static void bottomUpMergeSort(Comparable[] array, Comparable[] tempArray) {
 
         // we iterate through the array using fictitious array's of length N
         for (int width = 1; width < array.length; width = 2 * width){
@@ -217,41 +214,41 @@ public class Main {
 
     }
 
-    private static void bottomUpMergeHelper(int[] array, int[] tempArray, int indexLeft, int indexRight, int indexEnd){
-         int i = indexLeft;
-         int j = indexRight;
+    private static void bottomUpMergeHelper(Comparable[] array, Comparable[] tempArray, int indexLeft, int indexRight, int indexEnd){
+        int i = indexLeft;
+        int j = indexRight;
 
-         for (int k = indexLeft; k < indexEnd; k++){
+        for (int k = indexLeft; k < indexEnd; k++){
 
-             if (i < indexRight &&  (j >= indexEnd || array[i] < array[j])) {
-                 tempArray[k] = array[i];
-                 i++;
-             } else {
-                 tempArray[k] = array[j];
-                 j++;
-             }
-         }
+            if (i < indexRight &&  (j >= indexEnd || (array[i].compareTo(array[j])) < 0) ) {
+                tempArray[k] = array[i];
+                i++;
+            } else {
+                tempArray[k] = array[j];
+                j++;
+            }
+        }
     }
 
-    private static void copyArray(int[] copyFromArray, int[] copyToArray){
+    private static void copyArray(Comparable[] copyFromArray, Comparable[] copyToArray){
         for (int i = 0; i < copyFromArray.length; i++){
             copyToArray[i] = copyFromArray[i];
         }
     }
 
 
-    public static int[] bogosort(int[] array) {
+    public static Comparable[] bogosort(Comparable[] array) {
 
         boolean sorting = true;
         while (sorting) {
-        // check if it is sorted
+            // check if it is sorted
             for (int i = 1; i < array.length; i++) {
-                if (array[i - 1] < array[i]) {
+                if (array[i - 1].compareTo(array[i]) == -1) {
                     if (i == array.length - 1) {
                         sorting = false;
                     }
                 } else {
-                break;
+                    break;
                 }
             }
 
@@ -263,7 +260,7 @@ public class Main {
         return array;
     }
 
-    public static int[] bubbleSort(int[] array ){
+    public static Comparable[] bubbleSort(Comparable[] array ){
 
         // if you ever wanted to use the real bubble sort it is provided with the library.
 
@@ -271,7 +268,7 @@ public class Main {
         while (sorting) {
             // check if sorted enough
             for (int j = 1; j < array.length; j ++) {
-                if (array[j-1] < array [j]) {
+                if (array[j-1].compareTo(array[j]) == -1) {
                     if (j == array.length-1) {
                         sorting = false;
                     }
@@ -284,8 +281,8 @@ public class Main {
             if (sorting) {
 
                 for (int i = 0; i < array.length - 1; i++) {
-                    if (array[i] > array[i + 1]) {
-                        int itemAtI = array[i];
+                    if (array[i].compareTo(array[i + 1]) == 1) {
+                        Comparable itemAtI = array[i];
                         array[i] = array[i + 1];
                         array[i + 1] = itemAtI;
                     }
@@ -296,7 +293,7 @@ public class Main {
         return array;
     }
 
-    private static int[] halfBubbleSort(int[] array){
+    private static Comparable[] halfBubbleSort(Comparable[] array){
         /// returns an array where the top half of the array are in the right order as a result of bubble sorting
 
 
@@ -304,7 +301,7 @@ public class Main {
         while (sorting) {
             // check if sorted enough
             for (int j = array.length/2; j < array.length; j ++) {
-                if (array[j-1] < array [j]) {
+                if (array[j-1].compareTo(array[j]) == -1) {
                     if (j == array.length-1) {
                         sorting = false;
                     }
@@ -317,8 +314,8 @@ public class Main {
             if (sorting) {
 
                 for (int i = 0; i < array.length - 1; i++) {
-                    if (array[i] > array[i + 1]) {
-                        int itemAtI = array[i];
+                    if (array[i].compareTo(array[i + 1]) == 1) {
+                        Comparable itemAtI = array[i];
                         array[i] = array[i + 1];
                         array[i + 1] = itemAtI;
                     }
@@ -331,13 +328,13 @@ public class Main {
     }
 
 
-    public static void insertionSort(int[] array) {
+    public static void insertionSort(Comparable[] array) {
 
         int i = 1;
         while (i < array.length) {
             int j = i;
-            while (j > 0 && array[j-1] > array[j]) {
-                int itemAtJ = array[j];
+            while (j > 0 && array[j-1].compareTo(array[j]) == 1) {
+                Comparable itemAtJ = array[j];
                 array[j] = array[j - 1];
                 array[j - 1] = itemAtJ;
                 j = j-i;
@@ -346,11 +343,11 @@ public class Main {
         }
     }
 
-    private static void shuffle(int[] array){
+    private static void shuffle(Comparable[] array){
         // The fisher yates shuffle algorithm
 
         int max = array.length;
-        int element;
+        Comparable element;
         int index;
 
 
@@ -372,8 +369,8 @@ public class Main {
         }
     }
 
-    private static int[] combine(int[] arr1, int[] arr2){
-        int[] newArray = new int[arr1.length + arr2.length];
+    private static Comparable[] combine(Comparable[] arr1, Comparable[] arr2){
+        Comparable[] newArray = new Comparable[arr1.length + arr2.length];
 
         for (int i = 0; i < newArray.length; i++) {
             if (i < arr1.length) {
@@ -386,7 +383,7 @@ public class Main {
         return newArray;
     }
 
-    private static String toString(int[] array) {
+    private static String toString(Comparable[] array) {
         String string = "[";
 
         for (int i=0;i<array.length;i++){
@@ -417,14 +414,14 @@ public class Main {
 
     }
 
-    private static int[][] split(int[] array) {
+    private static Comparable[][] split(Comparable[] array) {
 
         // allocate space for two halves of the array
-        int[] firstHalf = new int[array.length/2];
+        Comparable[] firstHalf = new Comparable[array.length/2];
         // this handles odd array lengths ensuring that we always have space for each element
-        int[] secondHalf = new int[array.length - firstHalf.length];
+        Comparable[] secondHalf = new Comparable[array.length - firstHalf.length];
 
-        // iterate through and assign elements to the apropriate array.
+        // iterate through and assign elements to the appropriate array.
         for (int i = 0; i< array.length; i++) {
             if (i < firstHalf.length) {
                 firstHalf[i] = array[i];
@@ -434,7 +431,7 @@ public class Main {
 
         }
 
-        int[][] arrayOfArrays = {firstHalf,secondHalf};
+        Comparable[][] arrayOfArrays = {firstHalf,secondHalf};
 
         return  arrayOfArrays;
     }
