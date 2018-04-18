@@ -1,5 +1,7 @@
 package com.company;
 
+import javax.swing.text.DefaultEditorKit;
+
 public class Main {
 
     public static void main(String[] args) {
@@ -89,18 +91,23 @@ public class Main {
         // quicksort is really complicated....
         // I'm skipping this and using bogosort here too. Because bogosort is OP
         int[] fourthQuarter = splitSecondHalf[1];
-        System.out.println(toString(fourthQuarter));
-        bogosort(fourthQuarter);
-        System.out.println(toString(fourthQuarter));
+//        System.out.println(toString(fourthQuarter));
+//        bogosort(fourthQuarter);
+//        System.out.println(toString(fourthQuarter));
 
 
         // 7. Merge sort third and fourth quarters
-        int[] secondHalfFinal = mergeSort(thirdQuarter,fourthQuarter);
+        int[] combinedThirdAndFourth = combine(thirdQuarter, fourthQuarter);
+        int[] tempArray = new int[combinedThirdAndFourth.length];
+        bottomUpMergeSort(combinedThirdAndFourth, tempArray);
 
         // 7. Merge sort first and second half
-        int[] finalArray = mergeSort(firstHalfFinal, secondHalfFinal);
 
-        return finalArray;
+        int[] combinedWholeThing = combine(firstHalfFinal, combinedThirdAndFourth);
+        int[] tempFinal = new int[combinedWholeThing.length];
+        bottomUpMergeSort(combinedWholeThing, tempFinal);
+
+        return combinedWholeThing;
     }
 
 
@@ -134,6 +141,48 @@ public class Main {
         return mergedArray;
     }
 
+
+    public static void bottomUpMergeSort(int[] array, int[] tempArray) {
+
+        // we iterate through the array using fictitious array's of length N
+        for (int width = 1; width < array.length; width = 2 * width){
+
+            for (int i = 0; i < array.length; i = i + 2 * width) {
+
+                bottomUpMergeHelper(array, tempArray, i, Math.min(i+width, array.length), Math.min(i+2*width, array.length));
+
+            }
+
+            copyArray(tempArray, array);
+
+        }
+
+
+    }
+
+    private static void bottomUpMergeHelper(int[] array, int[] tempArray, int indexLeft, int indexRight, int indexEnd){
+         int i = indexLeft;
+         int j = indexRight;
+
+         for (int k = indexLeft; k < indexEnd; k++){
+
+             if (i < indexRight &&  (j >= indexEnd || array[i] < array[j])) {
+                 tempArray[k] = array[i];
+                 i++;
+             } else {
+                 tempArray[k] = array[j];
+                 j++;
+             }
+         }
+    }
+
+    private static void copyArray(int[] copyFromArray, int[] copyToArray){
+        for (int i = 0; i < copyFromArray.length; i++){
+            copyToArray[i] = copyFromArray[i];
+        }
+    }
+
+
     public static int[] bogosort(int[] array) {
 
         boolean sorting = true;
@@ -157,6 +206,36 @@ public class Main {
         return array;
     }
 
+    public static int[] bubbleSort(int[] array ){
+
+        boolean sorting = true;
+        while (sorting) {
+            // check if sorted enough
+            for (int j = 1; j < array.length; j ++) {
+                if (array[j-1] < array [j]) {
+                    if (j == array.length-1) {
+                        sorting = false;
+                    }
+                } else  {
+                    break;
+                }
+            }
+
+            // if it isn't we do the bubble sort pattern once
+            if (sorting) {
+
+                for (int i = 0; i < array.length - 1; i++) {
+                    if (array[i] > array[i + 1]) {
+                        int itemAtI = array[i];
+                        array[i] = array[i + 1];
+                        array[i + 1] = itemAtI;
+                    }
+                }
+
+            }
+        }
+        return array;
+    }
 
     private static int[] halfBubbleSort(int[] array){
         /// returns an array where the top half of the array are in the right order as a result of bubble sorting
